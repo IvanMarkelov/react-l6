@@ -67,7 +67,7 @@ function TodoItem({ title, id, completed }) {
           console.log(checked);
         }}
       />
-      <span>Is checked? {checked}</span>
+      {/* <span>Is checked? {checked}</span> */}
       <span>{title}</span>
     </li>
   );
