@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
+
+const Context = React.createContext();
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -29,17 +31,38 @@ function App() {
     }
   };
 
+  const removeTodo = (id) => {
+    setTodos(
+      todos.filter((todo) => {
+        return todo.id !== id;
+      })
+    );
+  };
+
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map(todo => {
+        if (todo.id === id) {
+          todo.completed = !todo.completed;
+        }
+        return todo;
+      })
+    );
+  };
+
   return (
-    <div className="App">
-      <h1>Todo app</h1>
-      <input
-        type="text"
-        value={todoTitle}
-        onChange={(e) => setTodoTitle(e.target.value)}
-        onKeyPress={addTodo}
-      />
-      <TodoList todos={todos} />
-    </div>
+    <Context.Provider value={{toggleTodo, removeTodo}}>
+      <div className="App">
+        <h1>Todo app</h1>
+        <input
+          type="text"
+          value={todoTitle}
+          onChange={(e) => setTodoTitle(e.target.value)}
+          onKeyPress={addTodo}
+        />
+        <TodoList todos={todos} />
+      </div>
+    </Context.Provider>
   );
 }
 
@@ -54,11 +77,12 @@ function TodoList({ todos }) {
 }
 
 function TodoItem({ title, id, completed }) {
-  const [checked, setChecked] = useState(completed);
+
+  const { toggleTodo, removeTodo } = useContext(Context);
 
   let cls = [""];
 
-  if (checked) {
+  if (completed) {
     cls.push("completed");
   } else {
     cls = [""];
@@ -67,14 +91,14 @@ function TodoItem({ title, id, completed }) {
     <li className={cls.join(" ")}>
       <input
         type="checkbox"
-        checked={checked}
+        checked={completed}
         onChange={() => {
-          setChecked(!checked);
-          console.log(checked);
+          toggleTodo(id);
         }}
       />
       {/* <span>Is checked? {checked}</span> */}
       <span>{title}</span>
+      <button onClick={() => removeTodo(id)}>Delete Todo</button>
     </li>
   );
 }
