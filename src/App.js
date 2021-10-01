@@ -1,22 +1,39 @@
-import React from 'react';
+import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import './App.css';
 
 function App() {
-  const [numbers, setNumbers] = useState([1, 2, 3]);
-
-  const addNumber = () => {
-    setNumbers([...numbers, numbers.length + 1]);
-  };
+  const formSearchRef = useRef(null);
   return (
     <div className="App">
-      <ul>
-        {numbers.map((number, index) => (
-          <li key={index}>{number}</li>
-        ))}
-      </ul>
-      <button onClick={addNumber}>Add Number</button>
+      <FormSearchHOC ref={formSearchRef} />
+      <button onClick={() => formSearchRef.current?.onSubmit()}>Отправить форму в родительском компоненте</button>
     </div>
   );
 }
 
+function FormSearch(props, ref) {
+  const [searchString, setSearchString] = useState("");
+
+  const onSubmit = useCallback(
+    () => {
+      console.log("Sending...", searchString)
+    },
+    [searchString],
+  )
+
+  useImperativeHandle(ref, () => ({
+    onSubmit: () => {
+      console.log("Отправка формы с ref");
+      onSubmit();
+    }
+  }), [onSubmit])
+
+  return (  
+  <div>
+    <label>Search: </label>
+    <input onChange={(e) => setSearchString(e.target.value)}/>
+    <button onClick={onSubmit}>Start search</button>
+  </div>)
+}
+const FormSearchHOC = forwardRef(FormSearch);
 export default App;
