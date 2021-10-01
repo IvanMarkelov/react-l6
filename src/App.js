@@ -1,20 +1,46 @@
-import React from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import './App.css';
+import { CustomInput } from './CustomInput';
 
 function App() {
-  const [numbers, setNumbers] = useState([1, 2, 3]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const addNumber = () => {
-    setNumbers([...numbers, numbers.length + 1]);
+  const inputRef = useRef(null);
+  useEffect(() => {
+    inputRef.current.focus();
+  }, [])
+
+  const handleNameChange = (e) => {
+    setName(e.target.value);
   };
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+  const handlePhoneChange = (e) => {
+    setPhone(e.target.value);
+  };
+  const handleSubmit = () => {
+    console.log({email, name, phone})
+  }
+
   return (
     <div className="App">
-      <ul>
-        {numbers.map((number, index) => (
-          <li key={index}>{number}</li>
-        ))}
-      </ul>
-      <button onClick={addNumber}>Add Number</button>
+      <div>
+        <label>Name:</label>
+        <input onChange={handleNameChange} />
+      </div>
+      <div>
+        <label>Email:</label>
+        <input onChange={handleEmailChange}  />
+      </div>
+      <div>
+        <label>Phone:</label>
+        <input onChange={handlePhoneChange}  />
+      </div>
+      <CustomInput ref={inputRef} label="NEW EMAIL" onChange={handleEmailChange} />
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 }
