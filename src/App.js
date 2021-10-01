@@ -1,20 +1,26 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import { render } from "react-dom";
+import "./App.css";
+
+const Example = () => {
+  const NOT_SET_STATUS = "-----------------NOT SET-----------------";
+  const INITIALIZED_STATUS = "initialized";
+
+  const [status, setStatus] = React.useState(NOT_SET_STATUS);
+  const [initialized] = React.useState(true);
+
+  React.useLayoutEffect(() => {
+    setStatus(INITIALIZED_STATUS);
+  }, [])
+
+  return <h1>{status}</h1>
+};
 
 function App() {
-  const [numbers, setNumbers] = useState([1, 2, 3]);
 
-  const addNumber = () => {
-    setNumbers([...numbers, numbers.length + 1]);
-  };
   return (
     <div className="App">
-      <ul>
-        {numbers.map((number, index) => (
-          <li key={index}>{number}</li>
-        ))}
-      </ul>
-      <button onClick={addNumber}>Add Number</button>
+      <Example />
     </div>
   );
 }
