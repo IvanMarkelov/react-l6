@@ -1,20 +1,47 @@
-import React from 'react';
-import './App.css';
+import React, { useEffect, useRef } from "react";
+import "./App.css";
+import { Input } from "./Input";
 
 function App() {
-  const [numbers, setNumbers] = useState([1, 2, 3]);
+  const firstNameRef = useRef(null);
+  const lastNameRef = useRef(null);
+  const submitRef = useRef(null);
 
-  const addNumber = () => {
-    setNumbers([...numbers, numbers.length + 1]);
+  useEffect(() => {
+    firstNameRef.current.focus();
+  });
+
+  const firstKeyDown = (e) => {
+    if (e.key === "Enter") {
+      lastNameRef.current.focus();
+    }
+  };
+  const lastKeyDown = (e) => {
+    if (e.key === "Enter") {
+      submitRef.current.focus();
+    }
+  };
+  const submitKeyDown = (e) => {
+    alert("Form submitted");
   };
   return (
     <div className="App">
-      <ul>
-        {numbers.map((number, index) => (
-          <li key={index}>{number}</li>
-        ))}
-      </ul>
-      <button onClick={addNumber}>Add Number</button>
+      <Input
+        placeholder="first name"
+        ref={firstNameRef}
+        onKeyDown={firstKeyDown}
+      />
+      <Input
+        placeholder="last name"
+        ref={lastNameRef}
+        onKeyDown={lastKeyDown}
+      />
+      <Input
+        type="submit"
+        value="Submit"
+        ref={submitRef}
+        onKeyDown={submitKeyDown}
+      />
     </div>
   );
 }
