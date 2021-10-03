@@ -2,62 +2,59 @@ import React, { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [numbers, setNumbers] = React.useState([1, 2, 3, 4, 5, 6, 7]);
-  const ulRef = React.useRef(null);
+  const [number, setNumber] = useState(0);
+  const [number2, setNumber2] = useState(0);
 
-  const numbersRef = React.useRef();
-  numbersRef.current = numbers;
-
-  const addNumber = () => {
-    setNumbers((prev) => [...prev, prev.length + 1]);
-  };
-
-  const handleScroll = React.useCallback(() => {
-    console.log("scroll", numbersRef.current);
-  }, []);
-
-  const start = () => {
-    ulRef.current.addEventListener("scroll", handleScroll);
-  };
-
-  const stop = () => {
-    ulRef.current.removeEventListener("scroll", handleScroll);
-  };
   return (
     <div className="App">
-      <button onClick={addNumber}>Add Number</button>
-      <button onClick={start}>start</button>
-      <button onClick={stop}>stop</button>
-      <ul ref={ulRef} style={{ overflow: "scroll", height: "100px" }}>
-        {numbers.map((number, index) => (
-          <li key={index}>{number}</li>
-        ))}
-      </ul>
-      <Counter />
+      <div>
+        <h1>Increase Number 1</h1>
+        <Count id={1} value={number} />
+        <button onClick={() => setNumber(number + 1)}>+</button>
+      </div>
+      <div>
+        <h1>Increase Number 2</h1>
+        <Count id={2} value={number2} />
+        <button onClick={() => setNumber2(number2 + 1)}>+</button>
+        <IsFive value={number2} />
+      </div>
     </div>
   );
 }
 
-const Counter = () => {
-  const [count, setCount] = useState(0);
-  const inc = React.useCallback(() => setCount((count) => count + 1), []);
-  const dec = React.useCallback(() => setCount((count) => count - 1), []);
-  return (
-    <div>
-      <h1>{count}</h1>
-      <Buttons inc={inc} dec={dec} />
-    </div>
-  );
+const render = {
+  count1: 0,
+  count2: 0,
 };
 
-const Buttons = React.memo((props) => {
-  console.log("Buttons render");
+const Count = React.memo(({ id, value }) => {
+  console.log(`Count ${id} render: ${++render[`count${id}`]}`);
+
   return (
-    <>
-      <button onClick={props.dec}>-</button>
-      <button onClick={props.inc}>+</button>
-    </>
+    <div>
+      <span>{value}</span>
+    </div>
   );
+});
+
+let renderCount = 0;
+
+const IsFive = React.memo((props) => {
+  console.log(`is five render: ${++renderCount}`);
+
+  const getResult = React.useMemo(() => {
+    let i = 0;
+    while (i < 600000000) i++;
+    return props.value === 5 ? "Это пять!" : "Это не пять :(";
+  }, [props.value]);
+
+  return <h3>{getResult}</h3>;
+}, (prevProps, nextProps) => {
+  if (nextProps.value === 5) {
+    return false
+  } else {
+    return 5;
+  }
 });
 
 export default App;
