@@ -1,27 +1,29 @@
-import React, { useState, useEffect, useContext, useReducer } from "react";
-import "./App.css";
-import reducer from "./reducer";
+import React, { useState, useEffect, useContext, useReducer } from 'react';
+import './App.css';
+import reducer from './reducer';
 
 const Context = React.createContext();
 
 function App() {
   const [state, dispatch] = useReducer(
     reducer,
-    JSON.parse(localStorage.getItem("todos"))
+    JSON.parse(localStorage.getItem('todos')) || [
+      { id: Date.now(), title: 'First Todo', completed: false },
+    ]
   );
-  const [todoTitle, setTodoTitle] = useState("");
+  const [todoTitle, setTodoTitle] = useState('');
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(state));
+    localStorage.setItem('todos', JSON.stringify(state));
   }, [state]);
 
   const addTodo = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       dispatch({
-        type: "add",
+        type: 'add',
         payload: todoTitle,
       });
-      setTodoTitle("");
+      setTodoTitle('');
     }
   };
 
@@ -54,28 +56,36 @@ function TodoList({ todos }) {
 function TodoItem({ title, id, completed }) {
   const { dispatch } = useContext(Context);
 
-  let cls = [""];
+  let cls = [''];
 
   if (completed) {
-    cls.push("completed");
+    cls.push('completed');
   } else {
-    cls = [""];
+    cls = [''];
   }
   return (
-    <li className={cls.join(" ")}>
+    <li className={cls.join(' ')}>
       <input
         type="checkbox"
         checked={completed}
-        onChange={() => dispatch({
-          type: "toggle",
-          payload: id,
-        })}
+        onChange={() =>
+          dispatch({
+            type: 'toggle',
+            payload: id,
+          })
+        }
       />
       <span>{title}</span>
-      <button onClick={() => dispatch({
-          type: "remove",
-          payload: id,
-        })}>Delete Todo</button>
+      <button
+        onClick={() =>
+          dispatch({
+            type: 'remove',
+            payload: id,
+          })
+        }
+      >
+        Delete Todo
+      </button>
     </li>
   );
 }
